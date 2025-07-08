@@ -1,0 +1,93 @@
+-- Vehicle OEM Server Initial Database Schema
+-- This migration creates all the core tables for the vehicle digital key management system
+
+-- Create owner_accounts table
+CREATE TABLE IF NOT EXISTS owner_accounts (
+    id BIGSERIAL PRIMARY KEY,
+    account_id VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    address VARCHAR(100),
+    city VARCHAR(50),
+    state VARCHAR(20),
+    zip_code VARCHAR(10),
+    country VARCHAR(50),
+    account_status VARCHAR(255) CHECK (account_status IN ('ACTIVE','INACTIVE','SUSPENDED','PENDING_VERIFICATION','LOCKED')) DEFAULT 'ACTIVE',
+    email_verified BOOLEAN DEFAULT FALSE,
+    phone_verified BOOLEAN DEFAULT FALSE,
+    last_login_at TIMESTAMP(6),
+    failed_login_attempts INTEGER DEFAULT 0,
+    account_locked_until TIMESTAMP(6),
+    created_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create vehicles table
+CREATE TABLE IF NOT EXISTS vehicles (
+    id BIGSERIAL PRIMARY KEY,
+    vin VARCHAR(17) UNIQUE NOT NULL,
+    make VARCHAR(50) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    model_year INTEGER NOT NULL,
+    color VARCHAR(30),
+    license_plate VARCHAR(20),
+    engine_type VARCHAR(50),
+    transmission_type VARCHAR(30),
+    fuel_type VARCHAR(30),
+    mileage INTEGER,
+    vehicle_status VARCHAR(255) CHECK (vehicle_status IN ('ACTIVE','INACTIVE','MAINTENANCE','STOLEN','TOTALED','SOLD')) DEFAULT 'ACTIVE',
+    subscription_tier VARCHAR(255) CHECK (subscription_tier IN ('BASIC','PREMIUM','ENTERPRISE')) DEFAULT 'BASIC',
+    public_key_certificate TEXT,
+    pairing_password VARCHAR(255),
+    pairing_verifier VARCHAR(255),
+    subscription_active BOOLEAN DEFAULT TRUE,
+    subscription_expires_at TIMESTAMP(6),
+    max_keys_allowed INTEGER DEFAULT 5,
+    current_key_count INTEGER DEFAULT 0,
+    last_activity_at TIMESTAMP(6),
+    total_key_usage_count BIGINT DEFAULT 0,
+    warranty_expires_at TIMESTAMP(6),
+    purchase_date TIMESTAMP(6),
+    dealer_name VARCHAR(100),
+    created_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    owner_id BIGINT,
+    CONSTRAINT fk_vehicles_owner FOREIGN KEY (owner_id) REFERENCES owner_accounts(id)
+);
+
+-- Create digital_keys table
+CREATE TABLE IF NOT EXISTS digital_keys (
+    id BIGSERIAL PRIMARY KEY,
+    key_id VARCHAR(100) UNIQUE NOT NULL,
+    device_id VARCHAR(100) NOT NULL,
+    device_oem VARCHAR(50) NOT NULL,
+    device_model VARCHAR(50),
+    device_os VARCHAR(30),
+    device_os_version VARCHAR(20),
+    key_type VARCHAR(255) CHECK (key_type IN ('OWNER','FRIEND')),
+    status VARCHAR(255) CHECK (status IN ('ACTIVE','SUSPENDED','TERMINATED','EXPIRED')),
+    public_key TEXT,
+    ui_bundle VARCHAR(255),
+    vehicle_mobilization_data VARCHAR(255),
+    friend_email VARCHAR(100),
+    friend_name VARCHAR(100),
+    friend_phone VARCHAR(20),
+    permission_level VARCHAR(255) CHECK (permission_level IN ('FULL_ACCESS','DRIVE_ONLY','UNLOCK_ONLY','TRUNK_ONLY','EMERGENCY_ONLY','VALET')),
+    time_restrictions VARCHAR(255),
+    location_restrictions VARCHAR(255),
+    expires_at TIMESTAMP(6),
+    valid_from TIMESTAMP(6),
+    activated_at TIMESTAMP(6),
+    last_used_at TIMESTAMP(6),
+    usage_count BIGINT DEFAULT 0,
+    max_usage_count BIGINT,
+    revoked_at TIMESTAMP(6),
+    revoked_by VARCHAR(100),
+    revocation_reason VARCHAR(255),
+    created_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    vehicle_id BIGINT,
+    CONSTRAINT fk_digital_keys_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
+);

@@ -1,0 +1,243 @@
+### Vehicle OEM Server API Tests
+### Base URL: http://localhost:8082
+### Authentication: Basic admin:admin123
+
+### Variables
+@baseUrl = http://localhost:8082
+@auth = admin admin123
+@accountId = ACC1751901400
+@email = test1751901400@example.com
+@vin = 1HGBH41JXMN901400
+
+### Health Check
+GET {{baseUrl}}/actuator/health
+Authorization: Basic {{auth}}
+
+###
+
+### 1. Create Owner Account
+POST {{baseUrl}}/api/v1/accounts
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+accountId={{accountId}}&email={{email}}&firstName=Test&lastName=User
+
+###
+
+### 2. Get Owner Account by ID
+GET {{baseUrl}}/api/v1/accounts/{{accountId}}
+Authorization: Basic {{auth}}
+
+###
+
+### 3. Get Owner Account by Email
+GET {{baseUrl}}/api/v1/accounts/by-email/{{email}}
+Authorization: Basic {{auth}}
+
+###
+
+### 4. Create Vehicle (Test-Friendly)
+POST {{baseUrl}}/api/v1/vehicles/test-friendly
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+vin={{vin}}&make=Honda&model=Accord&year=2023&ownerAccountId={{accountId}}
+
+###
+
+### 5. Verify Owner Email
+POST {{baseUrl}}/api/v1/accounts/{{accountId}}/verify-email
+Authorization: Basic {{auth}}
+
+###
+
+### 6. Update Vehicle Subscription Tier to Premium
+PUT {{baseUrl}}/api/v1/vehicles/{{vin}}/subscription-tier?tier=PREMIUM
+Authorization: Basic {{auth}}
+
+###
+
+### 7. Track Digital Key (Owner Key)
+POST {{baseUrl}}/api/v1/keys/track
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "keyId": "OWNER-KEY-{{accountId}}",
+  "deviceId": "IPHONE-14-ABC123",
+  "deviceOem": "Apple",
+  "vehicleId": "{{vin}}",
+  "keyType": "OWNER",
+  "publicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+  "expiresAt": "2025-08-01T23:59:59"
+}
+
+###
+
+### 8. Manage Digital Key (Suspend)
+POST {{baseUrl}}/api/v1/keys/manage
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "keyId": "OWNER-KEY-{{accountId}}",
+  "action": "SUSPEND",
+  "reason": "Temporary suspension for testing",
+  "requestedBy": "admin"
+}
+
+###
+
+### 9. Manage Digital Key (Resume)
+POST {{baseUrl}}/api/v1/keys/manage
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "keyId": "OWNER-KEY-{{accountId}}",
+  "action": "RESUME",
+  "reason": "Resuming after testing",
+  "requestedBy": "admin"
+}
+
+###
+
+### 10. Share Digital Key (Friend Key)
+POST {{baseUrl}}/api/v1/key-sharing/share
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "vehicleVin": "{{vin}}",
+  "friendEmail": "jane.doe@example.com",
+  "friendName": "Jane Doe",
+  "permissionLevel": "DRIVE_ONLY",
+  "expiresAt": "2025-08-01T23:59:59",
+  "sharedBy": "{{email}}",
+  "message": "Sharing my car key with you"
+}
+
+###
+
+### 11. Accept Key Invitation
+POST {{baseUrl}}/api/v1/key-sharing/accept/INV-1B1C92C4F3CE
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+acceptedBy=jane.doe@example.com
+
+###
+
+### 12. Update Key Permissions
+PUT {{baseUrl}}/api/v1/key-sharing/permissions/OWNER-KEY-{{accountId}}
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+permissions=UNLOCK,LOCK,START_ENGINE&updatedBy={{accountId}}
+
+###
+
+### 13. Set Key Restrictions
+PUT {{baseUrl}}/api/v1/key-sharing/restrictions/OWNER-KEY-{{accountId}}
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+timeRestrictions=09:00-17:00&locationRestrictions=Home,Office&maxUsageCount=10&updatedBy={{accountId}}
+
+###
+
+### 14. Get Pending Invitations
+GET {{baseUrl}}/api/v1/key-sharing/invitations/{{vin}}
+Authorization: Basic {{auth}}
+
+###
+
+### 15. Get Shared Keys
+GET {{baseUrl}}/api/v1/key-sharing/shared-keys/{{vin}}
+Authorization: Basic {{auth}}
+
+###
+
+### 16. Revoke Shared Key
+POST {{baseUrl}}/api/v1/key-sharing/revoke/OWNER-KEY-{{accountId}}
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+revokedBy={{accountId}}&reason=No longer needed
+
+###
+
+### 17. Initialize Vehicle Pairing
+POST {{baseUrl}}/api/v1/vehicles/{{vin}}/initialize-pairing
+Authorization: Basic {{auth}}
+
+###
+
+### 18. Update Vehicle Subscription
+PUT {{baseUrl}}/api/v1/vehicles/{{vin}}/subscription?active=true&expiresAt=2025-12-31T23:59:59
+Authorization: Basic {{auth}}
+
+###
+
+### 19. Initiate Vehicle Pairing
+POST {{baseUrl}}/api/v1/pairing/initiate
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "vehicleVin": "{{vin}}",
+  "deviceId": "DEVICE-003",
+  "deviceOem": "Apple",
+  "ownerAccountId": "{{accountId}}"
+}
+
+###
+
+### 20. Complete Vehicle Pairing
+POST {{baseUrl}}/api/v1/pairing/complete
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "sessionId": "SESSION-001",
+  "pairingPassword": "123456",
+  "devicePublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+  "deviceCertificate": "MIIBkTCCATegAwIBAgIJAL..."
+}
+
+###
+
+### 21. Revoke Pairing
+POST {{baseUrl}}/api/v1/pairing/revoke/SESSION-001
+Authorization: Basic {{auth}}
+Content-Type: application/x-www-form-urlencoded
+
+revokedBy={{accountId}}&reason=Device lost
+
+###
+
+### 22. Manage Key - Terminate
+POST {{baseUrl}}/api/v1/keys/manage
+Authorization: Basic {{auth}}
+Content-Type: application/json
+
+{
+  "keyId": "OWNER-KEY-{{accountId}}",
+  "action": "TERMINATE",
+  "reason": "Key no longer needed",
+  "requestedBy": "admin"
+}
+
+###
+
+### 23. Application Info
+GET {{baseUrl}}/actuator/info
+Authorization: Basic {{auth}}
+
+###
+
+### 24. Application Metrics
+GET {{baseUrl}}/actuator/metrics
+Authorization: Basic {{auth}}
+
+###
