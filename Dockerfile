@@ -17,5 +17,5 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # Run the application
-EXPOSE 8080
+EXPOSE 8088
 CMD ["java", "-jar", "target/vehicle-oem-server-1.0.0.jar"]
