@@ -82,7 +82,7 @@ GRANT ALL PRIVILEGES ON DATABASE vehicle_oem_db TO vehicle_oem_user;
 mvn spring-boot:run
 ```
 
-The application will start on port 8080.
+The application will start on port 8088.
 
 ## API Documentation
 

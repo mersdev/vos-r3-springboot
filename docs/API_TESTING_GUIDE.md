@@ -26,7 +26,7 @@ The project includes `api-tests.http` file with comprehensive API tests. This fi
 
 2. **Verify Application is Running**:
    ```bash
-   curl http://localhost:8080/actuator/health
+   curl http://localhost:8088/actuator/health
    ```
 
 ### Test Scenarios
@@ -98,7 +98,7 @@ The project also includes a Postman collection: `vehicle-oem-api.postman_collect
 2. Click "Import"
 3. Select `vehicle-oem-api.postman_collection.json`
 4. Configure environment variables:
-   - `baseUrl`: `http://localhost:8080`
+   - `baseUrl`: `http://localhost:8088`
    - `username`: `admin`
    - `password`: `admin123`
 
@@ -110,21 +110,21 @@ For basic testing, create this minimal dataset:
 
 ```http
 ### 1. Create Owner Account
-POST http://localhost:8080/api/v1/accounts
+POST http://localhost:8088/api/v1/accounts
 Authorization: Basic admin admin123
 Content-Type: application/x-www-form-urlencoded
 
 accountId=TEST-OWNER&email=test@example.com&firstName=Test&lastName=User
 
 ### 2. Create Vehicle
-POST http://localhost:8080/api/v1/vehicles
+POST http://localhost:8088/api/v1/vehicles
 Authorization: Basic admin admin123
 Content-Type: application/x-www-form-urlencoded
 
 vin=TEST123456789&make=Tesla&model=Model3&year=2023&ownerAccountId=TEST-OWNER
 
 ### 3. Track Key
-POST http://localhost:8080/api/v1/keys/track
+POST http://localhost:8088/api/v1/keys/track
 Authorization: Basic admin admin123
 Content-Type: application/json
 
@@ -165,13 +165,13 @@ For comprehensive business scenario testing:
 
 1. **Invalid Authentication**:
    ```http
-   GET http://localhost:8080/api/v1/accounts/TEST-OWNER
+   GET http://localhost:8088/api/v1/accounts/TEST-OWNER
    Authorization: Basic invalid credentials
    ```
 
 2. **Missing Required Fields**:
    ```http
-   POST http://localhost:8080/api/v1/accounts
+   POST http://localhost:8088/api/v1/accounts
    Authorization: Basic admin admin123
    Content-Type: application/json
    
@@ -183,7 +183,7 @@ For comprehensive business scenario testing:
 
 3. **Duplicate Resources**:
    ```http
-   POST http://localhost:8080/api/v1/accounts
+   POST http://localhost:8088/api/v1/accounts
    Authorization: Basic admin admin123
    Content-Type: application/x-www-form-urlencoded
    
@@ -192,7 +192,7 @@ For comprehensive business scenario testing:
 
 4. **Resource Not Found**:
    ```http
-   GET http://localhost:8080/api/v1/accounts/NON-EXISTENT
+   GET http://localhost:8088/api/v1/accounts/NON-EXISTENT
    Authorization: Basic admin admin123
    ```
 
@@ -205,7 +205,7 @@ For comprehensive business scenario testing:
 for i in {1..100}; do
   curl -s -w "%{http_code}\n" \
     -u admin:admin123 \
-    http://localhost:8080/actuator/health > /dev/null
+    http://localhost:8088/actuator/health > /dev/null
 done
 ```
 
@@ -213,10 +213,10 @@ done
 
 ```bash
 # Test health endpoint
-ab -n 1000 -c 10 -A admin:admin123 http://localhost:8080/actuator/health
+ab -n 1000 -c 10 -A admin:admin123 http://localhost:8088/actuator/health
 
 # Test API endpoint
-ab -n 100 -c 5 -A admin:admin123 http://localhost:8080/api/v1/accounts/TEST-OWNER
+ab -n 100 -c 5 -A admin:admin123 http://localhost:8088/api/v1/accounts/TEST-OWNER
 ```
 
 ## Automated Testing

@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 APP_NAME="vehicle-oem-server"
-APP_PORT="8080"
+APP_PORT="8088"
 DB_PORT="5532"
 DB_NAME="vehicle_oem_db"
 DB_USER="vehicle_oem_user"

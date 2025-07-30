@@ -117,7 +117,7 @@ podman-compose -f podman-compose.yml up -d
 
 | Service | Port | URL |
 |---------|------|-----|
-| Vehicle OEM Server | 8080 | http://localhost:8080 |
+| Vehicle OEM Server | 8088 | http://localhost:8088 |
 | PostgreSQL | 5532 | localhost:5532 |
 | Device OEM Mock | 8081 | http://localhost:8081 |
 | KTS Mock | 8082 | http://localhost:8082 |

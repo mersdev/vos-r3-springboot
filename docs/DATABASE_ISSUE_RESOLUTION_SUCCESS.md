@@ -27,7 +27,7 @@ The Vehicle OEM Server application is now running without any database connectio
 **Solution**: Added `@Column(name = "model_year")` annotation to Vehicle entity
 
 ### **4. Port Conflicts** ✅
-**Issue**: Ports 8080 and 8081 already in use
+**Issue**: Ports 8088 and 8081 already in use
 
 **Solution**: Changed application port to 8082
 

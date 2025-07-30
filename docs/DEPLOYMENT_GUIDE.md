@@ -57,7 +57,7 @@ podman build -t vehicle-oem-server .
 podman run -d \
   --name vehicle-oem-server \
   --network vehicle-oem-network \
-  -p 8080:8080 \
+  -p 8088:8088 \
   -e DB_USERNAME=vehicle_oem_user \
   -e DB_PASSWORD=vehicle_oem_pass \
   -e SPRING_DATASOURCE_URL=jdbc:postgresql://vehicle-oem-postgres:5432/vehicle_oem_db \
@@ -114,7 +114,7 @@ docker build -t vehicle-oem-server .
 docker run -d \
   --name vehicle-oem-server \
   --network vehicle-oem-network \
-  -p 8080:8080 \
+  -p 8088:8088 \
   -e DB_USERNAME=vehicle_oem_user \
   -e DB_PASSWORD=vehicle_oem_pass \
   -e SPRING_DATASOURCE_URL=jdbc:postgresql://vehicle-oem-postgres:5432/vehicle_oem_db \
@@ -165,7 +165,7 @@ spring:
 
 | Service | Port | Description |
 |---------|------|-------------|
-| Vehicle OEM Server | 8080 | Main application |
+| Vehicle OEM Server | 8088 | Main application |
 | PostgreSQL | 5532 | Database |
 | Device OEM Mock | 8081 | Mock service |
 | KTS Mock | 8082 | Mock service |
@@ -175,7 +175,7 @@ spring:
 
 ### Application Health
 ```bash
-curl http://localhost:8080/actuator/health
+curl http://localhost:8088/actuator/health
 ```
 
 ### Database Health
@@ -188,7 +188,7 @@ podman exec vehicle-oem-postgres pg_isready -U vehicle_oem_user -d vehicle_oem_d
 
 ### Common Issues
 
-1. **Port conflicts**: Ensure ports 8080, 5532, 8081-8083 are available
+1. **Port conflicts**: Ensure ports 8088, 5532, 8081-8083 are available
 2. **Permission issues**: Use `--userns keep-id` with Podman
 3. **SELinux issues**: Use `--security-opt label=disable` or proper SELinux contexts
 4. **Database connection**: Verify PostgreSQL is running and accessible

@@ -131,8 +131,8 @@ task --list
 - **Telematics Mock:** http://localhost:8083
 
 ### Application
-- **Port:** 8080
-- **Health Check:** http://localhost:8080/actuator/health
+- **Port:** 8088
+- **Health Check:** http://localhost:8088/actuator/health
 
 ## Development Workflow
 
@@ -197,7 +197,7 @@ task db:start
 **3. Port conflicts**
 ```bash
 # Check what's using the ports
-lsof -i :8080  # Application
+lsof -i :8088  # Application
 lsof -i :5532  # Database
 lsof -i :8081  # Device OEM Mock
 ```

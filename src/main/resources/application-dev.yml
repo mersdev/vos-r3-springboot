@@ -1,6 +1,6 @@
 # Development configuration with PostgreSQL Database
 server:
-  port: 8082
+  port: 8088
 
 spring:
   datasource:
